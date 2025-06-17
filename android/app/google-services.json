@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "558056975643",
+    "project_id": "oraculum-app-dcde3",
+    "storage_bucket": "oraculum-app-dcde3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:558056975643:android:1d4a5853618faa370937be",
+        "android_client_info": {
+          "package_name": "com.selddon.oraculum"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "558056975643-lem38nve503188e0kgdnecca756vmjlp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.selddon.oraculum",
+            "certificate_hash": "1c5e9ef94288b78845dd0c29b8eabcbe9b51d73b"
+          }
+        },
+        {
+          "client_id": "558056975643-m9qjdtt2g4p8vctgr1jkrc5rado7e2lj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.selddon.oraculum",
+            "certificate_hash": "57ae44e0d50864d10e57b31940c8b5978fd2cfe2"
+          }
+        },
+        {
+          "client_id": "558056975643-b92nq2l8v49k6j2mg1tqkj6ho45t3rj7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3cZd7uPj_9GKstUJvCoRqarcYQcSSMC0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "558056975643-b92nq2l8v49k6j2mg1tqkj6ho45t3rj7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "558056975643-o6vmlq8ai2v46n6jg9ks4lmssdtgtns1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.selddon.oraculum.oraculum"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
