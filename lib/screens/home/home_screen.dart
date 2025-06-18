@@ -204,10 +204,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
                             _buildAccountStatus(isSmallScreen, isTablet),
                             SizedBox(height: verticalSpacing),
                             // 5. Banner Promocional
-                            _buildPromotionalBanner(isSmallScreen, isTablet),
+                            _buildFeaturedMediums(isSmallScreen, isTablet),
                             SizedBox(height: verticalSpacing),
                             // 6. Médiuns em Destaque
-                            _buildFeaturedMediums(isSmallScreen, isTablet),
+                            _buildPromotionalBanner(isSmallScreen, isTablet),
                             SizedBox(height: verticalSpacing * 2),
                           ],
                         ),
@@ -363,26 +363,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
                           color: Colors.white,
                           fontSize: isTablet ? 28 : 24,
                           fontWeight: FontWeight.bold,
+                          letterSpacing: 0.5,
                         ),
                       ),
                       SizedBox(height: 2),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: signColor.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: signColor.withOpacity(0.4),
-                            width: 1,
-                          ),
-                        ),
-                        child: Text(
-                          element,
-                          style: TextStyle(
-                            color: signColor,
-                            fontSize: isTablet ? 14 : 12,
-                            fontWeight: FontWeight.w600,
-                          ),
+                      Text(
+                        'Elemento: $element',
+                        style: TextStyle(
+                          color: signColor,
+                          fontSize: isTablet ? 14 : 12,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],
@@ -390,11 +380,148 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
                 ),
               ],
             ),
+            SizedBox(height: isTablet ? 24 : 20),
+
+            // Resumo do horóscopo diário
+            Obx(() {
+              final dailyHoroscope = _horoscopeController.dailyHoroscope.value;
+
+              if (dailyHoroscope != null && dailyHoroscope.content.isNotEmpty) {
+                String horoscopeSummary = '';
+
+                try {
+                  final Map<String, dynamic> data = json.decode(dailyHoroscope.content);
+
+                  // Tentar extrair resumo de diferentes campos possíveis
+                  if (data.containsKey('resumo')) {
+                    horoscopeSummary = data['resumo']['body'] ?? data['resumo'].toString();
+                  } else if (data.containsKey('geral')) {
+                    horoscopeSummary = data['geral']['body'] ?? data['geral'].toString();
+                  } else if (data.containsKey('amor')) {
+                    horoscopeSummary = data['amor']['body'] ?? data['amor'].toString();
+                  } else {
+                    horoscopeSummary = data.values.first.toString();
+                  }
+                } catch (e) {
+                  // Se não for JSON, usar o conteúdo como texto direto
+                  horoscopeSummary = dailyHoroscope.content;
+                }
+
+                // Limitar o resumo a 120 caracteres
+                if (horoscopeSummary.length > 120) {
+                  horoscopeSummary = '${horoscopeSummary.substring(0, 120)}...';
+                }
+
+                return Container(
+                  padding: EdgeInsets.all(isTablet ? 20 : 16),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.2),
+                      width: 1,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.today,
+                            color: signColor,
+                            size: isTablet ? 20 : 18,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Horóscopo de Hoje',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: isTablet ? 16 : 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: isTablet ? 12 : 10),
+                      Text(
+                        horoscopeSummary,
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.9),
+                          fontSize: isTablet ? 14 : 12,
+                          height: 1.4,
+                        ),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              // Se não há horóscopo carregado, mostrar loading ou placeholder
+              return Container(
+                padding: EdgeInsets.all(isTablet ? 20 : 16),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    if (_horoscopeController.isLoading.value)
+                      SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(signColor),
+                        ),
+                      )
+                    else
+                      Icon(
+                        Icons.refresh,
+                        color: signColor,
+                        size: isTablet ? 20 : 18,
+                      ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        _horoscopeController.isLoading.value
+                            ? 'Carregando seu horóscopo...'
+                            : 'Toque para carregar seu horóscopo',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.8),
+                          fontSize: isTablet ? 14 : 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+
             SizedBox(height: isTablet ? 20 : 16),
+
+            // Botão para ver horóscopo completo
             GestureDetector(
-              onTap: () => Get.toNamed(AppRoutes.horoscope),
+              onTap: () {
+                // Se não há horóscopo carregado, carregar primeiro
+                if (_horoscopeController.dailyHoroscope.value == null) {
+                  _horoscopeController.getDailyHoroscope(userSign);
+                }
+                Get.toNamed(AppRoutes.horoscope);
+              },
               child: Container(
-                padding: EdgeInsets.all(isTablet ? 16 : 14),
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(
+                  vertical: isTablet ? 16 : 14,
+                  horizontal: isTablet ? 20 : 16,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(16),
@@ -413,7 +540,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Toque para ver seu horóscopo completo',
+                        'Ver horóscopo completo',
                         style: TextStyle(
                           color: Colors.white.withOpacity(0.9),
                           fontSize: isTablet ? 16 : 14,
@@ -793,7 +920,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
   Widget _buildPromotionalBanner(bool isSmallScreen, bool isTablet) {
     return Container(
       width: double.infinity,
-      height: isTablet ? 160 : isSmallScreen ? 120 : 140,
+      height: isTablet ? 148 : isSmallScreen ? 108 : 128,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
         gradient: LinearGradient(
@@ -823,7 +950,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
             borderRadius: BorderRadius.circular(24),
             child: Stack(
               children: [
-                // Efeito de partículas/estrelas de fundo
                 ...List.generate(15, (index) {
                   return Positioned(
                     left: (index * 47.0) % 300,
@@ -842,26 +968,25 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
                   );
                 }),
 
-                // Ícone decorativo
                 Positioned(
                   right: -20,
                   bottom: -20,
                   child: Icon(
                     Icons.auto_awesome,
-                    size: isTablet ? 100 : 80,
+                    size: isTablet ? 90 : 70,
                     color: Colors.white.withOpacity(0.1),
                   ),
                 ),
 
-                // Conteúdo principal
                 Padding(
-                  padding: EdgeInsets.all(isTablet ? 24 : 20),
+                  padding: EdgeInsets.all(isTablet ? 18 : 14),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.25),
                           borderRadius: BorderRadius.circular(12),
@@ -875,35 +1000,39 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: isTablet ? 12 : 10,
+                            fontSize: isTablet ? 11 : 9,
                           ),
                         ),
                       ),
-                      SizedBox(height: isTablet ? 12 : 8),
-                      Text(
-                        'Ganhe até 15% de desconto\nem créditos',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: isTablet ? 20 : isSmallScreen ? 16 : 18,
-                          height: 1.2,
+                      SizedBox(height: isTablet ? 8 : 4),
+                      Flexible(
+                        child: Text(
+                          'Ganhe até 15% de desconto\nem créditos',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: isTablet ? 16 : isSmallScreen ? 12 : 14,
+                            height: 1.1,
+                          ),
                         ),
                       ),
-                      SizedBox(height: 4),
+                      SizedBox(height: 3),
                       Row(
                         children: [
-                          Text(
-                            'Oferta válida por tempo limitado',
-                            style: TextStyle(
-                              color: Colors.white.withOpacity(0.8),
-                              fontSize: isTablet ? 14 : isSmallScreen ? 11 : 12,
+                          Flexible(
+                            child: Text(
+                              'Oferta válida por tempo limitado',
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.8),
+                                fontSize: isTablet ? 12 : isSmallScreen ? 9 : 10,
+                              ),
                             ),
                           ),
-                          const Spacer(),
+                          const SizedBox(width: 8),
                           Container(
                             padding: EdgeInsets.symmetric(
-                              horizontal: isTablet ? 16 : 12,
-                              vertical: isTablet ? 8 : 6,
+                              horizontal: isTablet ? 12 : 8,
+                              vertical: isTablet ? 4 : 3,
                             ),
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -917,13 +1046,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
                                   style: TextStyle(
                                     color: const Color(0xFF392F5A),
                                     fontWeight: FontWeight.bold,
-                                    fontSize: isTablet ? 14 : 12,
+                                    fontSize: isTablet ? 11 : 9,
                                   ),
                                 ),
-                                SizedBox(width: 4),
+                                SizedBox(width: 3),
                                 Icon(
                                   Icons.arrow_forward,
-                                  size: isTablet ? 16 : 14,
+                                  size: isTablet ? 12 : 10,
                                   color: const Color(0xFF392F5A),
                                 ),
                               ],
@@ -939,7 +1068,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
           ),
         ),
       ),
-    ).animate(delay: 1800.ms).fadeIn(duration: 600.ms).slideY(begin: 0.2);
+    ).animate(delay: 2000.ms).fadeIn().slideY(begin: 0.3);
   }
 
   Widget _buildQuickServices(BuildContext context, bool isSmallScreen, bool isTablet) {
