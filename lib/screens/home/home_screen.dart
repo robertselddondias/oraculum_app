@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -241,7 +240,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
             SizedBox(height: 4),
             Obx(() {
               final user = _authController.userModel.value;
-              final firstName = user?.name?.split(' ').first ?? 'Visitante';
+              final firstName = user?.name.split(' ').first ?? 'Visitante';
               return Text(
                 firstName,
                 style: TextStyle(
@@ -1260,7 +1259,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
           ],
         ).animate(delay: 2200.ms).fadeIn().slideX(begin: -0.2),
         SizedBox(height: isTablet ? 16 : 12),
-        Container(
+        SizedBox(
           height: isTablet ? 240 : isSmallScreen ? 200 : 220,
           child: Obx(() {
             if (_mediumController.isLoading.value) {

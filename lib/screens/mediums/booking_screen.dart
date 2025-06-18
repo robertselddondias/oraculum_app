@@ -1058,8 +1058,7 @@ class _BookingScreenState extends State<BookingScreen> with TickerProviderStateM
               onPrimary: Colors.white,
               surface: Color(0xFF1A1A2E),
               onSurface: Colors.white,
-            ),
-            dialogBackgroundColor: const Color(0xFF1A1A2E),
+            ), dialogTheme: DialogThemeData(backgroundColor: const Color(0xFF1A1A2E)),
           ),
           child: child!,
         );
