@@ -1424,9 +1424,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
                         ],
                       ),
                       child: ClipOval(
-                        child: medium.imageUrl.isNotEmpty
+                        child: medium.imageUrl!.isNotEmpty
                             ? Image.network(
-                          medium.imageUrl,
+                          medium.imageUrl!,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) =>
                               Icon(
