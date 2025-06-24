@@ -24,6 +24,7 @@ dependencies:
   lottie: ^3.1.2
   fui_kit: ^2.0.0
   store_redirect: ^2.0.2
+  table_calendar: ^3.1.3
 
   # Input Formatting & Validation
   mask_text_input_formatter: ^2.9.0

@@ -478,9 +478,9 @@ class _MediumsListScreenState extends State<MediumsListScreen> with TickerProvid
                 children: [
                   CircleAvatar(
                     radius: 25,
-                    backgroundImage: medium.imageUrl.isNotEmpty ? NetworkImage(medium.imageUrl) : null,
+                    backgroundImage: medium.imageUrl!.isNotEmpty ? NetworkImage(medium.imageUrl!) : null,
                     backgroundColor: const Color(0xFF6C63FF),
-                    child: medium.imageUrl.isEmpty
+                    child: medium.imageUrl!.isEmpty
                         ? const Icon(Icons.person, color: Colors.white, size: 30)
                         : null,
                   ),
