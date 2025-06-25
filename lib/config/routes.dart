@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:oraculum/controllers/appointment_controller.dart';
 import 'package:oraculum/controllers/horoscope_controller.dart';
 import 'package:oraculum/screens/astrology/birth_chart_details_screen.dart';
 import 'package:oraculum/screens/astrology/birth_chart_history_screen.dart';
@@ -14,6 +15,7 @@ import 'package:oraculum/screens/home/navigation_screen.dart';
 import 'package:oraculum/screens/mediums/booking_screen.dart';
 import 'package:oraculum/screens/mediums/medium_profile_screen.dart';
 import 'package:oraculum/screens/mediums/mediums_list_screen.dart';
+import 'package:oraculum/screens/mediums/my_appointments_screen.dart';
 import 'package:oraculum/screens/onboarding_screen.dart';
 import 'package:oraculum/screens/payment/payment_history_screen.dart';
 import 'package:oraculum/screens/payment/payment_methods_screen.dart';
@@ -47,6 +49,7 @@ class AppRoutes {
   static const String mediumsList = '/mediums-list';
   static const String mediumProfile = '/medium-profile';
   static const String booking = '/booking';
+  static const String myAppointments = '/my-appointments';
   static const String profile = '/profile';
   static const String settings = '/settings';
   static const String paymentMethods = '/payment-methods';
@@ -57,9 +60,6 @@ class AppRoutes {
   static const String googleRegisterComplete = '/google-register-complete';
   static const String notificationSettings = '/notificationSettings';
   static const String notificationList = '/notificationList';
-
-
-
 
   static final routes = [
     GetPage(name: splash, page: () => const SplashScreen()),
@@ -78,6 +78,15 @@ class AppRoutes {
     GetPage(name: mediumsList, page: () => const MediumsListScreen()),
     GetPage(name: mediumProfile, page: () => const MediumProfileScreen()),
     GetPage(name: booking, page: () => const BookingScreen()),
+    GetPage(
+      name: myAppointments,
+      page: () => const MyAppointmentsScreen(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: 300),
+      binding: BindingsBuilder(() {
+        Get.lazyPut<AppointmentController>(() => AppointmentController());
+      }),
+    ),
     GetPage(name: profile, page: () => const ProfileScreen()),
     GetPage(name: settings, page: () => const SettingsScreen()),
     GetPage(name: paymentMethods, page: () => const PaymentMethodsScreen()),
@@ -85,7 +94,7 @@ class AppRoutes {
     GetPage(
       name: savedReading,
       page: () => const SavedReadingDetailScreen(),
-      transition: Transition.rightToLeft,  // Adicionando transição suave
+      transition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: 300),
     ),
     GetPage(
@@ -95,7 +104,6 @@ class AppRoutes {
         Get.lazyPut<HoroscopeController>(() => HoroscopeController());
       }),
     ),
-
     GetPage(
       name: AppRoutes.birthChartDetails,
       page: () => const BirthChartDetailsScreen(),

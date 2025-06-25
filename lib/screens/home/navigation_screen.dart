@@ -7,6 +7,7 @@ import 'package:oraculum/controllers/auth_controller.dart';
 import 'package:oraculum/screens/astrology/horoscope_screen.dart';
 import 'package:oraculum/screens/home/home_screen.dart';
 import 'package:oraculum/screens/mediums/mediums_list_screen.dart';
+import 'package:oraculum/screens/mediums/my_appointments_screen.dart';
 import 'package:oraculum/screens/profile/profile_screen.dart';
 import 'package:oraculum/screens/tarot/tarot_reading_screen.dart';
 
@@ -23,7 +24,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
   // Páginas que serão exibidas na navegação
   final List<Widget> _screens = const [
     HomeScreen(),
-    HoroscopeScreen(),
+    MyAppointmentsScreen(),
     TarotReadingScreen(),
     MediumsListScreen(),
     ProfileScreen(),
@@ -134,9 +135,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
                 label: 'Início',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.auto_graph_outlined),
-                activeIcon: Icon(Icons.auto_graph),
-                label: 'Horóscopo',
+                icon: Icon(Icons.calendar_today_outlined),
+                activeIcon: Icon(Icons.calendar_today),
+                label: 'Agendamentos',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.style_outlined),

@@ -1,10 +1,12 @@
 import 'package:get/get.dart';
+import 'package:oraculum/controllers/appointment_controller.dart';
 import 'package:oraculum/controllers/auth_controller.dart';
 import 'package:oraculum/controllers/horoscope_controller.dart';
 import 'package:oraculum/controllers/medium_controller.dart';
 import 'package:oraculum/controllers/notification_controller.dart';
 import 'package:oraculum/controllers/payment_controller.dart';
 import 'package:oraculum/controllers/tarot_controller.dart';
+import 'package:oraculum/services/appointment_service.dart';
 import 'package:oraculum/services/firebase_service.dart';
 import 'package:oraculum/services/gemini_service.dart';
 import 'package:oraculum/services/payment_service.dart';
@@ -26,6 +28,9 @@ class InitialBinding implements Bindings {
     // IMPORTANTE: Push Notification Service ANTES do AuthController
     Get.put(PushNotificationService(), permanent: true);
 
+    // Appointment Service - novo serviço para agendamentos
+    Get.put(AppointmentService(), permanent: true);
+
     // Base controllers
     Get.put(AuthController(), permanent: true);
     Get.put(PaymentController(), permanent: true);
@@ -37,5 +42,6 @@ class InitialBinding implements Bindings {
     Get.put(MediumController(), permanent: true);
     Get.put(TarotController(), permanent: true);
     Get.put(HoroscopeController(), permanent: true);
+    Get.put(AppointmentController(), permanent: true);
   }
 }

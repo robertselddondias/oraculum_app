@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class AppointmentModel {
   final String id;
   final String clientId;
@@ -13,8 +15,13 @@ class AppointmentModel {
   final DateTime createdAt;
   final DateTime? updatedAt;
   final DateTime? completedAt;
+  final DateTime? canceledAt;
   final String? cancelReason;
+  final String? feedback;
+  final double? rating;
   final Map<String, dynamic>? paymentInfo;
+  final String? paymentStatus;
+  final String? paymentMethod;
 
   AppointmentModel({
     required this.id,
@@ -31,8 +38,13 @@ class AppointmentModel {
     required this.createdAt,
     this.updatedAt,
     this.completedAt,
+    this.canceledAt,
     this.cancelReason,
+    this.feedback,
+    this.rating,
     this.paymentInfo,
+    this.paymentStatus,
+    this.paymentMethod,
   });
 
   factory AppointmentModel.fromMap(Map<String, dynamic> map, String id) {
@@ -42,18 +54,37 @@ class AppointmentModel {
       mediumId: map['mediumId'] ?? '',
       mediumName: map['mediumName'] ?? '',
       clientName: map['clientName'] ?? '',
-      scheduledDate: DateTime.parse(map['scheduledDate']),
+      scheduledDate: _parseDateTime(map['scheduledDate']),
       duration: map['duration'] ?? 30,
       amount: (map['amount'] ?? 0.0).toDouble(),
       status: map['status'] ?? 'pending',
       description: map['description'] ?? '',
       consultationType: map['consultationType'] ?? 'Consulta Geral',
-      createdAt: DateTime.parse(map['createdAt']),
-      updatedAt: map['updatedAt'] != null ? DateTime.parse(map['updatedAt']) : null,
-      completedAt: map['completedAt'] != null ? DateTime.parse(map['completedAt']) : null,
+      createdAt: _parseDateTime(map['createdAt']),
+      updatedAt: map['updatedAt'] != null ? _parseDateTime(map['updatedAt']) : null,
+      completedAt: map['completedAt'] != null ? _parseDateTime(map['completedAt']) : null,
+      canceledAt: map['canceledAt'] != null ? _parseDateTime(map['canceledAt']) : null,
       cancelReason: map['cancelReason'],
+      feedback: map['feedback'],
+      rating: map['rating'] != null ? (map['rating'] as num).toDouble() : null,
       paymentInfo: map['paymentInfo'],
+      paymentStatus: map['paymentStatus'],
+      paymentMethod: map['paymentMethod'],
     );
+  }
+
+  static DateTime _parseDateTime(dynamic value) {
+    if (value == null) return DateTime.now();
+
+    if (value is Timestamp) {
+      return value.toDate();
+    } else if (value is String) {
+      return DateTime.parse(value);
+    } else if (value is DateTime) {
+      return value;
+    }
+
+    return DateTime.now();
   }
 
   Map<String, dynamic> toMap() {
@@ -62,17 +93,22 @@ class AppointmentModel {
       'mediumId': mediumId,
       'mediumName': mediumName,
       'clientName': clientName,
-      'scheduledDate': scheduledDate.toIso8601String(),
+      'scheduledDate': Timestamp.fromDate(scheduledDate),
       'duration': duration,
       'amount': amount,
       'status': status,
       'description': description,
       'consultationType': consultationType,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt?.toIso8601String(),
-      'completedAt': completedAt?.toIso8601String(),
+      'createdAt': Timestamp.fromDate(createdAt),
+      'updatedAt': updatedAt != null ? Timestamp.fromDate(updatedAt!) : null,
+      'completedAt': completedAt != null ? Timestamp.fromDate(completedAt!) : null,
+      'canceledAt': canceledAt != null ? Timestamp.fromDate(canceledAt!) : null,
       'cancelReason': cancelReason,
+      'feedback': feedback,
+      'rating': rating,
       'paymentInfo': paymentInfo,
+      'paymentStatus': paymentStatus,
+      'paymentMethod': paymentMethod,
     };
   }
 
@@ -91,8 +127,13 @@ class AppointmentModel {
     DateTime? createdAt,
     DateTime? updatedAt,
     DateTime? completedAt,
+    DateTime? canceledAt,
     String? cancelReason,
+    String? feedback,
+    double? rating,
     Map<String, dynamic>? paymentInfo,
+    String? paymentStatus,
+    String? paymentMethod,
   }) {
     return AppointmentModel(
       id: id ?? this.id,
@@ -109,15 +150,21 @@ class AppointmentModel {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       completedAt: completedAt ?? this.completedAt,
+      canceledAt: canceledAt ?? this.canceledAt,
       cancelReason: cancelReason ?? this.cancelReason,
+      feedback: feedback ?? this.feedback,
+      rating: rating ?? this.rating,
       paymentInfo: paymentInfo ?? this.paymentInfo,
+      paymentStatus: paymentStatus ?? this.paymentStatus,
+      paymentMethod: paymentMethod ?? this.paymentMethod,
     );
   }
 
+  // Status getters
   bool get isPending => status == 'pending';
   bool get isConfirmed => status == 'confirmed';
   bool get isCompleted => status == 'completed';
-  bool get isCancelled => status == 'cancelled';
+  bool get isCancelled => status == 'cancelled' || status == 'canceled';
 
   String get statusText {
     switch (status) {
@@ -128,15 +175,27 @@ class AppointmentModel {
       case 'completed':
         return 'Concluído';
       case 'cancelled':
+      case 'canceled':
         return 'Cancelado';
       default:
         return 'Desconhecido';
     }
   }
 
+  // Formatters
   String get formattedAmount => 'R\$ ${amount.toStringAsFixed(2)}';
-
   String get formattedDuration => '$duration min';
+
+  // Helper methods
+  bool get canBeCancelled {
+    return (isPending || isConfirmed) &&
+        scheduledDate.isAfter(DateTime.now().add(const Duration(hours: 2)));
+  }
+
+  bool get isUpcoming {
+    return (isPending || isConfirmed) &&
+        scheduledDate.isAfter(DateTime.now());
+  }
 
   @override
   String toString() {
