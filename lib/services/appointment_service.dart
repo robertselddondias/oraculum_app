@@ -106,6 +106,7 @@ class AppointmentService extends GetxService {
     required DateTime scheduledDate,
     required int duration,
     required double amount,
+    String? mediumImageUrl,
     required String description,
     String consultationType = 'Consulta Geral',
   }) async {
@@ -132,6 +133,7 @@ class AppointmentService extends GetxService {
         'mediumName': mediumData['name'] ?? 'Médium',
         'clientName': user.displayName ?? user.email ?? 'Cliente',
         'scheduledDate': Timestamp.fromDate(scheduledDate),
+        'mediumImageUrl': mediumImageUrl,
         'duration': duration,
         'amount': amount,
         'status': 'pending',

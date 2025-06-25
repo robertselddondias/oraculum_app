@@ -338,6 +338,7 @@ class MediumController extends GetxController {
         duration: durationMinutes,
         amount: amount,
         description: description,
+        mediumImageUrl: medium.imageUrl,
         consultationType: consultationType,
       );
 

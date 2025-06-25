@@ -5,6 +5,7 @@ class AppointmentModel {
   final String clientId;
   final String mediumId;
   final String mediumName;
+  final String? mediumImageUrl;
   final String clientName;
   final DateTime scheduledDate;
   final int duration;
@@ -45,6 +46,7 @@ class AppointmentModel {
     this.paymentInfo,
     this.paymentStatus,
     this.paymentMethod,
+    this.mediumImageUrl
   });
 
   factory AppointmentModel.fromMap(Map<String, dynamic> map, String id) {
@@ -70,6 +72,7 @@ class AppointmentModel {
       paymentInfo: map['paymentInfo'],
       paymentStatus: map['paymentStatus'],
       paymentMethod: map['paymentMethod'],
+      mediumImageUrl: map['mediumImageUrl'],
     );
   }
 
@@ -109,6 +112,7 @@ class AppointmentModel {
       'paymentInfo': paymentInfo,
       'paymentStatus': paymentStatus,
       'paymentMethod': paymentMethod,
+      'mediumImageUrl': mediumImageUrl
     };
   }
 
@@ -134,29 +138,31 @@ class AppointmentModel {
     Map<String, dynamic>? paymentInfo,
     String? paymentStatus,
     String? paymentMethod,
+    String? mediumImageUrl
   }) {
     return AppointmentModel(
-      id: id ?? this.id,
-      clientId: clientId ?? this.clientId,
-      mediumId: mediumId ?? this.mediumId,
-      mediumName: mediumName ?? this.mediumName,
-      clientName: clientName ?? this.clientName,
-      scheduledDate: scheduledDate ?? this.scheduledDate,
-      duration: duration ?? this.duration,
-      amount: amount ?? this.amount,
-      status: status ?? this.status,
-      description: description ?? this.description,
-      consultationType: consultationType ?? this.consultationType,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-      completedAt: completedAt ?? this.completedAt,
-      canceledAt: canceledAt ?? this.canceledAt,
-      cancelReason: cancelReason ?? this.cancelReason,
-      feedback: feedback ?? this.feedback,
-      rating: rating ?? this.rating,
-      paymentInfo: paymentInfo ?? this.paymentInfo,
-      paymentStatus: paymentStatus ?? this.paymentStatus,
-      paymentMethod: paymentMethod ?? this.paymentMethod,
+        id: id ?? this.id,
+        clientId: clientId ?? this.clientId,
+        mediumId: mediumId ?? this.mediumId,
+        mediumName: mediumName ?? this.mediumName,
+        clientName: clientName ?? this.clientName,
+        scheduledDate: scheduledDate ?? this.scheduledDate,
+        duration: duration ?? this.duration,
+        amount: amount ?? this.amount,
+        status: status ?? this.status,
+        description: description ?? this.description,
+        consultationType: consultationType ?? this.consultationType,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+        completedAt: completedAt ?? this.completedAt,
+        canceledAt: canceledAt ?? this.canceledAt,
+        cancelReason: cancelReason ?? this.cancelReason,
+        feedback: feedback ?? this.feedback,
+        rating: rating ?? this.rating,
+        paymentInfo: paymentInfo ?? this.paymentInfo,
+        paymentStatus: paymentStatus ?? this.paymentStatus,
+        paymentMethod: paymentMethod ?? this.paymentMethod,
+        mediumImageUrl: mediumImageUrl ?? this.mediumImageUrl
     );
   }
 

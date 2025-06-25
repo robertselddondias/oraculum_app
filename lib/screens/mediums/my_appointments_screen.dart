@@ -461,7 +461,7 @@ class _MyAppointmentsScreenState extends State<MyAppointmentsScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildMysticAppointmentHeader(appointment, statusColor, statusIcon),
+                _buildMysticAppointmentHeader(appointment),
                 const SizedBox(height: 16),
                 _buildMysticAppointmentDetails(appointment),
                 const SizedBox(height: 16),
@@ -474,30 +474,25 @@ class _MyAppointmentsScreenState extends State<MyAppointmentsScreen>
     );
   }
 
-  Widget _buildMysticAppointmentHeader(AppointmentModel appointment, Color statusColor, IconData statusIcon) {
+  Widget _buildMysticAppointmentHeader(AppointmentModel appointment) {
+    final statusColor = _getStatusColor(appointment.status);
+    final statusIcon = _getStatusIcon(appointment.status);
+
     return Row(
       children: [
-        Container(
-          width: 56,
-          height: 56,
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF6C63FF), Color(0xFF8E78FF)],
-            ),
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF6C63FF).withOpacity(0.4),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: const Icon(
+        CircleAvatar(
+          radius: 20,
+          backgroundImage: appointment.mediumImageUrl != null && appointment.mediumImageUrl!.isNotEmpty
+              ? NetworkImage(appointment.mediumImageUrl!)
+              : null,
+          backgroundColor: const Color(0xFF6C63FF),
+          child: appointment.mediumImageUrl == null || appointment.mediumImageUrl!.isEmpty
+              ? const Icon(
             Icons.auto_awesome,
             color: Colors.white,
-            size: 28,
-          ),
+            size: 20,
+          )
+              : null,
         ),
         const SizedBox(width: 16),
         Expanded(
@@ -881,17 +876,24 @@ class _MyAppointmentsScreenState extends State<MyAppointmentsScreen>
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Colors.red, Colors.redAccent],
-                ),
+                color: const Color(0xFFFF9D8A).withOpacity(0.2),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.cancel, color: Colors.white, size: 24),
+              child: const Icon(
+                Icons.schedule,
+                color: Color(0xFFFF9D8A),
+                size: 18,
+              ),
             ),
-            const SizedBox(width: 12),
-            const Text(
-              'Cancelar Consulta',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                appointment.formattedDuration,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                ),
+              ),
             ),
           ],
         ),
