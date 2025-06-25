@@ -190,22 +190,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SizedBox(height: verticalSpacing),
-                            // 1. Header de Boas-vindas com Nome
                             _buildWelcomeHeader(isSmallScreen, isTablet),
                             SizedBox(height: verticalSpacing),
-                            // 2. Card do Signo com Horóscopo Integrado - CONTEÚDO PRINCIPAL
                             _buildZodiacCard(isSmallScreen, isTablet),
                             SizedBox(height: verticalSpacing),
-                            // 3. Serviços Principais - AÇÕES MAIS USADAS
                             _buildQuickServices(context, isSmallScreen, isTablet),
                             SizedBox(height: verticalSpacing),
-                            // 4. Créditos e Status da Conta
-                            _buildAccountStatus(isSmallScreen, isTablet),
-                            SizedBox(height: verticalSpacing),
-                            // 5. Banner Promocional
                             _buildFeaturedMediums(isSmallScreen, isTablet),
                             SizedBox(height: verticalSpacing),
-                            // 6. Médiuns em Destaque
+                            _buildAccountStatus(isSmallScreen, isTablet),
+                            SizedBox(height: verticalSpacing),
                             _buildPromotionalBanner(isSmallScreen, isTablet),
                             SizedBox(height: verticalSpacing * 2),
                           ],
@@ -317,244 +311,272 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
             ),
           ],
         ),
-        child: Column(
+        child: Stack(
           children: [
-            Row(
-              children: [
-                Container(
-                  padding: EdgeInsets.all(isTablet ? 20 : 16),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        signColor.withOpacity(0.3),
-                        signColor.withOpacity(0.1),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(24),
-                    border: Border.all(
-                      color: signColor.withOpacity(0.5),
-                      width: 1,
-                    ),
-                  ),
-                  child: Icon(
-                    ZodiacUtils.getZodiacFallbackIcon(userSign),
-                    color: signColor,
-                    size: isTablet ? 36 : 32,
-                  ),
+            // Partículas de estrelas para efeito visual seguindo o padrão
+            ...ZodiacUtils.buildStarParticles(context, isTablet ? 15 : 10),
+
+            // Imagem do signo como fundo decorativo
+            Positioned(
+              right: -30,
+              top: -30,
+              child: Opacity(
+                opacity: 0.15,
+                child: ZodiacUtils.buildZodiacImage(
+                  userSign,
+                  size: isTablet ? 140 : 100,
+                  color: signColor,
                 ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Seu Signo',
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.8),
-                          fontSize: isTablet ? 16 : 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        userSign,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: isTablet ? 28 : 24,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                      SizedBox(height: 2),
-                      Text(
-                        'Elemento: $element',
-                        style: TextStyle(
-                          color: signColor,
-                          fontSize: isTablet ? 14 : 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+              ),
             ),
-            SizedBox(height: isTablet ? 24 : 20),
 
-            // Resumo do horóscopo diário
-            Obx(() {
-              final dailyHoroscope = _horoscopeController.dailyHoroscope.value;
-
-              if (dailyHoroscope != null && dailyHoroscope.content.isNotEmpty) {
-                String horoscopeSummary = '';
-
-                try {
-                  final Map<String, dynamic> data = json.decode(dailyHoroscope.content);
-
-                  // Tentar extrair resumo de diferentes campos possíveis
-                  if (data.containsKey('resumo')) {
-                    horoscopeSummary = data['resumo']['body'] ?? data['resumo'].toString();
-                  } else if (data.containsKey('geral')) {
-                    horoscopeSummary = data['geral']['body'] ?? data['geral'].toString();
-                  } else if (data.containsKey('amor')) {
-                    horoscopeSummary = data['amor']['body'] ?? data['amor'].toString();
-                  } else {
-                    horoscopeSummary = data.values.first.toString();
-                  }
-                } catch (e) {
-                  // Se não for JSON, usar o conteúdo como texto direto
-                  horoscopeSummary = dailyHoroscope.content;
-                }
-
-                // Limitar o resumo a 120 caracteres
-                if (horoscopeSummary.length > 120) {
-                  horoscopeSummary = '${horoscopeSummary.substring(0, 120)}...';
-                }
-
-                return Container(
-                  padding: EdgeInsets.all(isTablet ? 20 : 16),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.2),
-                      width: 1,
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.today,
-                            color: signColor,
-                            size: isTablet ? 20 : 18,
+            // Conteúdo principal
+            Column(
+              children: [
+                Row(
+                  children: [
+                    // Container circular com imagem do signo
+                    Container(
+                      width: isTablet ? 70 : 60,
+                      height: isTablet ? 70 : 60,
+                      padding: EdgeInsets.all(isTablet ? 12 : 10),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: LinearGradient(
+                          colors: [
+                            signColor.withOpacity(0.3),
+                            signColor.withOpacity(0.1),
+                          ],
+                        ),
+                        border: Border.all(
+                          color: signColor.withOpacity(0.5),
+                          width: 2,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: signColor.withOpacity(0.3),
+                            blurRadius: 15,
+                            offset: const Offset(0, 5),
                           ),
-                          const SizedBox(width: 8),
+                        ],
+                      ),
+                      child: ClipOval(
+                        child: ZodiacUtils.buildZodiacImage(
+                          userSign,
+                          size: isTablet ? 46 : 40,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
                           Text(
-                            'Horóscopo de Hoje',
+                            'Seu Signo',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.8),
+                              fontSize: isTablet ? 16 : 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            userSign,
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: isTablet ? 16 : 14,
+                              fontSize: isTablet ? 28 : 24,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                          SizedBox(height: 2),
+                          Text(
+                            'Elemento: $element',
+                            style: TextStyle(
+                              color: signColor,
+                              fontSize: isTablet ? 14 : 12,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(height: isTablet ? 12 : 10),
-                      Text(
-                        horoscopeSummary,
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.9),
-                          fontSize: isTablet ? 14 : 12,
-                          height: 1.4,
-                        ),
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                );
-              }
-
-              // Se não há horóscopo carregado, mostrar loading ou placeholder
-              return Container(
-                padding: EdgeInsets.all(isTablet ? 20 : 16),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.2),
-                    width: 1,
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    if (_horoscopeController.isLoading.value)
-                      SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(signColor),
-                        ),
-                      )
-                    else
-                      Icon(
-                        Icons.refresh,
-                        color: signColor,
-                        size: isTablet ? 20 : 18,
-                      ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        _horoscopeController.isLoading.value
-                            ? 'Carregando seu horóscopo...'
-                            : 'Toque para carregar seu horóscopo',
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.8),
-                          fontSize: isTablet ? 14 : 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
                     ),
                   ],
                 ),
-              );
-            }),
+                SizedBox(height: isTablet ? 24 : 20),
 
-            SizedBox(height: isTablet ? 20 : 16),
+                // Resumo do horóscopo diário
+                Obx(() {
+                  final dailyHoroscope = _horoscopeController.dailyHoroscope.value;
 
-            // Botão para ver horóscopo completo
-            GestureDetector(
-              onTap: () {
-                // Se não há horóscopo carregado, carregar primeiro
-                if (_horoscopeController.dailyHoroscope.value == null) {
-                  _horoscopeController.getDailyHoroscope(userSign);
-                }
-                Get.toNamed(AppRoutes.horoscope);
-              },
-              child: Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(
-                  vertical: isTablet ? 16 : 14,
-                  horizontal: isTablet ? 20 : 16,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.2),
-                    width: 1,
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.auto_graph,
-                      color: signColor,
-                      size: isTablet ? 24 : 20,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        'Ver horóscopo completo',
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.9),
-                          fontSize: isTablet ? 16 : 14,
-                          fontWeight: FontWeight.w500,
+                  if (dailyHoroscope != null && dailyHoroscope.content.isNotEmpty) {
+                    String horoscopeSummary = '';
+
+                    try {
+                      final Map<String, dynamic> data = json.decode(dailyHoroscope.content);
+
+                      if (data.containsKey('resumo')) {
+                        horoscopeSummary = data['resumo']['body'] ?? data['resumo'].toString();
+                      } else if (data.containsKey('geral')) {
+                        horoscopeSummary = data['geral']['body'] ?? data['geral'].toString();
+                      } else if (data.containsKey('amor')) {
+                        horoscopeSummary = data['amor']['body'] ?? data['amor'].toString();
+                      } else {
+                        horoscopeSummary = data.values.first.toString();
+                      }
+                    } catch (e) {
+                      horoscopeSummary = dailyHoroscope.content;
+                    }
+
+                    if (horoscopeSummary.length > 120) {
+                      horoscopeSummary = '${horoscopeSummary.substring(0, 120)}...';
+                    }
+
+                    return Container(
+                      padding: EdgeInsets.all(isTablet ? 20 : 16),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.1),
+                          width: 1,
                         ),
                       ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.auto_awesome,
+                                color: signColor,
+                                size: isTablet ? 20 : 18,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Horóscopo de Hoje',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: isTablet ? 16 : 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: isTablet ? 12 : 10),
+                          Text(
+                            horoscopeSummary,
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.9),
+                              fontSize: isTablet ? 14 : 12,
+                              height: 1.4,
+                            ),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  return Container(
+                    padding: EdgeInsets.all(isTablet ? 20 : 16),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.1),
+                        width: 1,
+                      ),
                     ),
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      color: Colors.white70,
-                      size: isTablet ? 20 : 16,
+                    child: Row(
+                      children: [
+                        if (_horoscopeController.isLoading.value)
+                          SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(signColor),
+                            ),
+                          )
+                        else
+                          Icon(
+                            Icons.refresh,
+                            color: signColor,
+                            size: isTablet ? 20 : 18,
+                          ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            _horoscopeController.isLoading.value
+                                ? 'Carregando seu horóscopo...'
+                                : 'Toque para carregar seu horóscopo',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.8),
+                              fontSize: isTablet ? 14 : 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  );
+                }),
+
+                SizedBox(height: isTablet ? 20 : 16),
+
+                // Botão para ver horóscopo completo
+                GestureDetector(
+                  onTap: () {
+                    if (_horoscopeController.dailyHoroscope.value == null) {
+                      _horoscopeController.getDailyHoroscope(userSign);
+                    }
+                    Get.toNamed(AppRoutes.navigation, arguments: 2);
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(
+                      vertical: isTablet ? 16 : 14,
+                      horizontal: isTablet ? 20 : 16,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.2),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.auto_graph,
+                          color: signColor,
+                          size: isTablet ? 24 : 20,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Ver horóscopo completo',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.9),
+                              fontSize: isTablet ? 16 : 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          color: Colors.white70,
+                          size: isTablet ? 20 : 16,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           ],
         ),
@@ -1576,8 +1598,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
 
   String _getGreeting() {
     final hour = DateTime.now().hour;
-    if (hour < 12) return 'Bom dia';
-    if (hour < 18) return 'Boa tarde';
-    return 'Boa noite';
+    if (hour < 12) return 'Bom dia,';
+    if (hour < 18) return 'Boa tarde,';
+    return 'Boa noite,';
   }
 }

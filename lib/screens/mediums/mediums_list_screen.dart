@@ -92,13 +92,6 @@ class _MediumsListScreenState extends State<MediumsListScreen> {
       ),
       child: Row(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-          const SizedBox(width: 16),
           Expanded(
             child: Text(
               'Médiuns Disponíveis',
@@ -109,6 +102,62 @@ class _MediumsListScreenState extends State<MediumsListScreen> {
               ),
             ),
           ),
+          // Botão para Meus Agendamentos
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.white.withOpacity(0.25),
+                  Colors.white.withOpacity(0.15),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.3),
+                width: 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Material(
+              color: Colors.transparent,
+              borderRadius: BorderRadius.circular(16),
+              child: InkWell(
+                onTap: () => Get.toNamed(AppRoutes.myAppointments),
+                borderRadius: BorderRadius.circular(16),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isTablet ? 16 : 12,
+                    vertical: isTablet ? 12 : 10,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.calendar_today,
+                        color: Colors.white,
+                        size: isTablet ? 20 : 18,
+                      ),
+                      SizedBox(width: isTablet ? 8 : 6),
+                      Text(
+                        isSmallScreen ? 'Meus' : 'Meus Agendamentos',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: isTablet ? 14 : isSmallScreen ? 12 : 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ).animate().fadeIn(delay: 300.ms).slideX(begin: 0.2, end: 0),
         ],
       ),
     );
@@ -567,11 +616,6 @@ class _MediumsListScreenState extends State<MediumsListScreen> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        Icons.attach_money,
-                        color: Colors.white,
-                        size: isTablet ? 16 : 14,
-                      ),
                       Text(
                         'R\$ ${medium.pricePerMinute.toStringAsFixed(2)}/min',
                         style: TextStyle(
