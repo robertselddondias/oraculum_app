@@ -349,7 +349,7 @@ class AppointmentsListScreen extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        appointment.statusText,
+                        _getStatusText(appointment.status),
                         style: TextStyle(
                           color: statusColor,
                           fontSize: isSmallScreen ? 11 : 12,
@@ -426,7 +426,7 @@ class AppointmentsListScreen extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      appointment.formattedAmount,
+                      'R\$ ${appointment.amount.toStringAsFixed(2)}',
                       style: TextStyle(
                         color: Colors.green,
                         fontSize: isSmallScreen ? 16 : 18,
@@ -435,7 +435,7 @@ class AppointmentsListScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                if (appointment.description.isNotEmpty)
+                if (appointment.description?.isNotEmpty == true)
                   Expanded(
                     child: Container(
                       margin: const EdgeInsets.only(left: 12),
@@ -449,7 +449,7 @@ class AppointmentsListScreen extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        appointment.description,
+                        appointment.description!,
                         style: TextStyle(
                           color: Colors.white.withOpacity(0.8),
                           fontSize: isSmallScreen ? 11 : 12,
@@ -461,11 +461,11 @@ class AppointmentsListScreen extends StatelessWidget {
                   ),
               ],
             ),
-            if (isUpcoming && (appointment.isPending || appointment.isConfirmed)) ...[
+            if (isUpcoming && (appointment.status == 'pending' || appointment.status == 'confirmed')) ...[
               const SizedBox(height: 16),
               Row(
                 children: [
-                  if (appointment.isPending) ...[
+                  if (appointment.status == 'pending') ...[
                     Expanded(
                       child: _buildActionButton(
                         'Cancelar',
@@ -501,7 +501,7 @@ class AppointmentsListScreen extends StatelessWidget {
                       isSmallScreen,
                     ),
                   ),
-                  if (appointment.isCompleted) ...[
+                  if (appointment.status == 'completed') ...[
                     const SizedBox(width: 12),
                     Expanded(
                       child: _buildActionButton(
@@ -612,6 +612,21 @@ class AppointmentsListScreen extends StatelessWidget {
         return Icons.cancel;
       default:
         return Icons.help_outline;
+    }
+  }
+
+  String _getStatusText(String status) {
+    switch (status) {
+      case 'pending':
+        return 'Pendente';
+      case 'confirmed':
+        return 'Confirmada';
+      case 'completed':
+        return 'Finalizada';
+      case 'cancelled':
+        return 'Cancelada';
+      default:
+        return 'Desconhecido';
     }
   }
 
@@ -791,9 +806,9 @@ class AppointmentsListScreen extends StatelessWidget {
               _buildDetailItem('Data:', DateFormat('dd/MM/yyyy').format(appointment.scheduledDate)),
               _buildDetailItem('Horário:', DateFormat('HH:mm').format(appointment.scheduledDate)),
               _buildDetailItem('Duração:', '${appointment.duration} minutos'),
-              _buildDetailItem('Status:', appointment.statusText),
-              _buildDetailItem('Valor:', appointment.formattedAmount),
-              if (appointment.description.isNotEmpty) ...[
+              _buildDetailItem('Status:', _getStatusText(appointment.status)),
+              _buildDetailItem('Valor:', 'R\$ ${appointment.amount.toStringAsFixed(2)}'),
+              if (appointment.description?.isNotEmpty == true) ...[
                 const SizedBox(height: 8),
                 const Text(
                   'Descrição:',
@@ -816,7 +831,7 @@ class AppointmentsListScreen extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    appointment.description,
+                    appointment.description!,
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.9),
                       fontSize: 13,
