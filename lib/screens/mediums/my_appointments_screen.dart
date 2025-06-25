@@ -150,24 +150,6 @@ class _MyAppointmentsScreenState extends State<MyAppointmentsScreen>
           // Conteúdo do AppBar
           Row(
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.2),
-                    width: 1,
-                  ),
-                ),
-                child: IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: Icon(
-                    Icons.arrow_back_ios_new,
-                    color: Colors.white,
-                    size: isTablet ? 24 : 20,
-                  ),
-                ),
-              ),
               Expanded(
                 child: Center(
                   child: Column(
