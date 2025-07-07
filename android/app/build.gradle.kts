@@ -1,9 +1,25 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
     id("kotlin-android")
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+// Carrega as propriedades do arquivo key.properties
+val signingProperties = Properties()
+val signingPropertiesFile = project.rootProject.file("key.properties")
+if (signingPropertiesFile.exists()) {
+    signingProperties.load(FileInputStream(signingPropertiesFile))
+} else {
+    // É crucial que este arquivo exista para o build de release.
+    // Se não existir, o build falhará com uma mensagem clara.
+    println("ERRO: O arquivo key.properties não foi encontrado. Certifique-se de que ele está na pasta 'android/'.")
+    // Você pode até lançar uma exceção para parar o build
+    // throw GradleException("key.properties file not found!")
 }
 
 android {
@@ -32,10 +48,16 @@ android {
 
     signingConfigs {
         create("release") {
-            keyAlias = System.getenv("KEY_ALIAS") ?: "chave_release"
-            keyPassword = System.getenv("KEY_PASSWORD") ?: "@@22anakin31"
-            storeFile = file("release-key.jks")
-            storePassword = System.getenv("STORE_PASSWORD") ?: "@@22anakin31"
+            // Tenta carregar os valores do key.properties
+            storeFile = file(signingProperties.getProperty("storeFile") ?: "release-key.jks")
+            storePassword = signingProperties.getProperty("storePassword")
+            keyAlias = signingProperties.getProperty("keyAlias")
+            keyPassword = signingProperties.getProperty("keyPassword")
+
+            // Adicione uma verificação básica para depuração se as propriedades não forem carregadas
+            if (storePassword == null || keyPassword == null || keyAlias == null) {
+                println("AVISO: Credenciais de assinatura incompletas. Verifique o key.properties.")
+            }
         }
     }
 

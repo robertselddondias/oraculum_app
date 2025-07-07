@@ -1,7 +1,7 @@
 name: oraculum
 description: Um aplicativo Flutter para leituras de tarô, horóscopo e consultas espirituais.
 publish_to: 'none'
-version: 1.0.0+2
+version: 1.0.0+4
 
 environment:
   sdk: '>=3.8.0 <4.0.0'

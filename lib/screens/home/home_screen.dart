@@ -533,7 +533,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
                     if (_horoscopeController.dailyHoroscope.value == null) {
                       _horoscopeController.getDailyHoroscope(userSign);
                     }
-                    Get.toNamed(AppRoutes.navigation, arguments: 2);
+                    Get.toNamed(AppRoutes.navigation, arguments: 1);
                   },
                   child: Container(
                     width: double.infinity,
